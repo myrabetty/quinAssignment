@@ -1,0 +1,11 @@
+version: '3.0'
+
+services:
+  quin:
+    container_name: quin-docker
+    build: .
+    ports:
+      - "8080:8080"
+      - "1212:1212"
+    environment:
+      - JAVA_TOOL_OPTIONS="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:1212"
