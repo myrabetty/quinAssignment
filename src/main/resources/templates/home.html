@@ -1,12 +1,13 @@
 <!DOCTYPE html>
-<html xmlns:th="https://www.thymeleaf.org" th:with="pageName=${#strings.concat(#strings.capitalizeWords(fileType), ' Upload')}">
+<html xmlns:th="http://www.thymeleaf.org">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"/>
 <head>
-    <title th:text="${pageName}"></title>
-    </th:block>
+    <title>Quin Assignment</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <link href="../static/css/app.css" th:href="@{/css/app.css}" rel="stylesheet" media="screen"/>
-    <link href="../static/images/mui-favicon-16x16.png" th:href="@{/images/mui-favicon-16x16.png}" type="image/png" rel="shortcut icon">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"/>
 </head>
 <body>
+<h1>Welcome</h1>
+<form name='f' action="/fileUpload" method='POST'>
+</form>
 </body>
+</html>
