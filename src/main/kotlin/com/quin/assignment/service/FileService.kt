@@ -1,14 +1,12 @@
 package com.quin.assignment.service
 
-import com.opencsv.CSVParserBuilder
-import com.opencsv.CSVReaderBuilder
+import com.opencsv.bean.CsvToBeanBuilder
 import model.DailyActivity
-import org.springframework.stereotype.Service
 import org.apache.logging.log4j.kotlin.Logging
+import org.springframework.stereotype.Service
 import java.io.BufferedReader
 import java.io.File
 import java.io.FileReader
-
 
 /**
  * processes the file.
@@ -17,27 +15,18 @@ import java.io.FileReader
 class FileService: Logging {
     fun process(file: File): Boolean {
 
-        var record: Array<String>?
         val reader = BufferedReader(FileReader(file.name))
-
-        val parser = CSVParserBuilder()
+        val csvBean = CsvToBeanBuilder<DailyActivity>(reader)
+                .withType(DailyActivity::class.java)
+                .withIgnoreLeadingWhiteSpace(true)
                 .withSeparator(',')
-                .withIgnoreQuotations(false)
                 .build()
 
-        val csvReader = CSVReaderBuilder(reader)
-                .withSkipLines(1)
-                .withCSVParser(parser)
-                .build()
+        val iterator:  Iterator<DailyActivity> = csvBean.iterator()
 
-        record = csvReader.readNext()
-        while (record != null) {
-            DailyActivity.mapper(record)
-            record = csvReader.readNext()
+        while (iterator.hasNext()) {
+            val dailyActivity = iterator.next()
         }
-
-        csvReader.close()
-        file.deleteOnExit()
         return true
     }
 }

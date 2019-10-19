@@ -1,35 +1,38 @@
 package model
 
+import com.opencsv.bean.CsvBindByName
+import com.opencsv.bean.CsvDate
+import com.opencsv.bean.CsvNumber
 import java.util.Date
-import java.text.SimpleDateFormat
 
+/**
+ * Class for Daily activity model.
+ */
 class DailyActivity(
-        var date: Date = Date(),
-        var caloriesIntake: Int = -1,
-        var steps: Int = -1,
+        @CsvBindByName(column = "Date", required = true)
+        @CsvDate("dd-mm-yyyy")
+        var date: Date? = null,
+        @CsvBindByName(column = "Calories", required = true)
+        @CsvNumber("#.###")
+        var caloriesIntake: Int? =null,
+        @CsvBindByName(column = "Steps", required = true)
+        @CsvNumber("#.###")
+        var steps: Int? = null,
+        @CsvBindByName(column = "Distance", required = true)
+        @CsvNumber("#,##")
         var distance: Float? = null,
-        var floors: Int = -1,
-        var minutesSitting: Int = -1,
-        var minutesModerateActivity: Int = -1,
-        var minutesIntenseActivity: Int = -1,
-        var caloriesBurned: Int = -1
-        ) {
-
-    companion object  {
-
-        private val formatter = SimpleDateFormat("dd-mm-yyyy")
-
-        fun mapper(tokens: Array<String>?) : DailyActivity {
-            var dailyActivity = DailyActivity()
-            dailyActivity.date = formatter.parse(tokens?.get(0))
-            dailyActivity.caloriesIntake = Integer.parseInt(tokens?.get(1))
-            dailyActivity.steps =  Integer.parseInt(tokens?.get(2))
-            return dailyActivity;
-        }
-
-        fun parseThousands(){
-
-        }
-
-    }
-}
+        @CsvBindByName(column = "floors", required = true)
+        var floors: Int? = null,
+        @CsvBindByName(column = "Minutes_sitting", required = true)
+        @CsvNumber("#.###")
+        var minutesSitting: Int? = null,
+        @CsvBindByName(column = "Minutes_of_slow_activity", required = true)
+        var minutesSlowActivity: Int? = null,
+        @CsvBindByName(column = "Minutes_of_moderate_activity", required = true)
+        var minutesModerateActivity: Int? = null,
+        @CsvBindByName(column = "Minutes_of_intense_activity", required = true)
+        var minutesIntenseActivity: Int? = null,
+        @CsvBindByName(column = "Calories_Activity", required = true)
+        @CsvNumber("#.###")
+        var caloriesBurned: Int? = null
+        )
