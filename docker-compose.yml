@@ -9,16 +9,21 @@ services:
       - "1212:1212"
     environment:
       - JAVA_TOOL_OPTIONS="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:1212"
-      command: '/bin/bash -c "/usr/bin/env chmod +x /project/wait-for-it.sh && /project/wait-for-it.sh dbpostgres:5432 -t 25 && java -jar /app.jar"'
-    links:
-      - dbpostgres
-  dbpostgres:
-    image: postgres
+    command: '/bin/bash -c "/usr/bin/env chmod +x /project/wait-for-it.sh && /project/wait-for-it.sh mysql:3306 -t 25 && java -jar /app.jar"'
     volumes:
-      - /private/var/lib/postgresql:/var/lib/postgresql
+      - ./docker/provision/wait-for-it.sh:/project/wait-for-it.sh
+    links:
+      - mysql
+  mysql:
+    image: mysql:5.8
     ports:
-      - "5432:5432"
+      - "13306:3306"
+    expose:
+      - "13306"
     environment:
-      POSTGRES_USER: pguser
-      POSTGRES_PASSWORD: pguser
-      POSTGRES_DB: pgdb
+      - MYSQL_USER=springuser
+      - MYSQL_PASSWORD=ThePassword
+      - MYSQL_DATABASE=activityMonitor
+      - MYSQL_ROOT_PASSWORD=root
+    volumes:
+      - "./conf.d:/etc/mysql/conf.d:ro"
