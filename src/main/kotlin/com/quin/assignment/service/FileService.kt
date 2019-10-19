@@ -1,5 +1,7 @@
 package com.quin.assignment.service
 
+import com.opencsv.CSVParserBuilder
+import com.opencsv.CSVReaderBuilder
 import model.DailyActivity
 import org.springframework.stereotype.Service
 import org.apache.logging.log4j.kotlin.Logging
@@ -7,28 +9,35 @@ import java.io.BufferedReader
 import java.io.File
 import java.io.FileReader
 
+
 /**
  * processes the file.
  **/
 @Service
 class FileService: Logging {
     fun process(file: File): Boolean {
-        var fileReader: BufferedReader? = null
 
-        var line: String?
+        var record: Array<String>?
+        val reader = BufferedReader(FileReader(file.name))
 
-        fileReader = BufferedReader(FileReader(file.name))
+        val parser = CSVParserBuilder()
+                .withSeparator(',')
+                .withIgnoreQuotations(false)
+                .build()
 
-        // Read CSV header
-        fileReader.readLine()
+        val csvReader = CSVReaderBuilder(reader)
+                .withSkipLines(0)
+                .withCSVParser(parser)
+                .build()
 
-        // Read the file line by line starting from the second line
-        line = fileReader.readLine()
-        while (line != null) {
-            val tokens = line.split(",")
-            if (tokens.isNotEmpty()) {
-                DailyActivity.mapper(tokens)
-            }
+        record = csvReader.readNext()
+        while (record != null) {
+            DailyActivity.mapper(record)
+            record = csvReader.readNext()
+        }
+
+        csvReader.close()
+        file.deleteOnExit()
+        return true
     }
-
 }

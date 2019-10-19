@@ -7,7 +7,7 @@ class DailyActivity(
         var date: Date = Date(),
         var caloriesIntake: Int = -1,
         var steps: Int = -1,
-        var distance: Int = -1,
+        var distance: Float? = null,
         var floors: Int = -1,
         var minutesSitting: Int = -1,
         var minutesModerateActivity: Int = -1,
@@ -18,14 +18,17 @@ class DailyActivity(
 
     companion object  {
         var formatter = SimpleDateFormat("dd-MMM-yyyy")
-        fun mapper(tokens: List<String>) : DailyActivity {
+        fun mapper(tokens: Array<String>?) : DailyActivity {
             var dailyActivity = DailyActivity()
-            dailyActivity.date = formatter.parse(tokens[0])
-            dailyActivity.caloriesIntake = Integer.parseInt(tokens[1])
-            dailyActivity.date = formatter.parse(tokens[0])
-            dailyActivity.date = formatter.parse(tokens[0])
-
+            dailyActivity.date = formatter.parse(tokens?.get(0))
+            dailyActivity.caloriesIntake = Integer.parseInt(tokens?.get(1))
+            dailyActivity.steps =  Integer.parseInt(tokens?.get(2))
             return dailyActivity;
         }
+
+        fun parseThousands(){
+
+        }
+
     }
 }
