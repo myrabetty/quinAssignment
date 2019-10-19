@@ -26,7 +26,7 @@ class FileService: Logging {
                 .build()
 
         val csvReader = CSVReaderBuilder(reader)
-                .withSkipLines(0)
+                .withSkipLines(1)
                 .withCSVParser(parser)
                 .build()
 

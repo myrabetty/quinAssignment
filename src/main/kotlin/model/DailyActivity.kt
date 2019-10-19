@@ -15,9 +15,10 @@ class DailyActivity(
         var caloriesBurned: Int = -1
         ) {
 
-
     companion object  {
-        var formatter = SimpleDateFormat("dd-MMM-yyyy")
+
+        private val formatter = SimpleDateFormat("dd-mm-yyyy")
+
         fun mapper(tokens: Array<String>?) : DailyActivity {
             var dailyActivity = DailyActivity()
             dailyActivity.date = formatter.parse(tokens?.get(0))
