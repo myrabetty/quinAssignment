@@ -1,4 +1,4 @@
-package model
+package com.quin.assignment.model
 
 import org.junit.jupiter.api.Test
 

@@ -1,32 +1,33 @@
-package model
+package com.quin.assignment.model
 
 import com.opencsv.bean.CsvBindByName
 import com.opencsv.bean.CsvDate
 import com.opencsv.bean.CsvNumber
-import java.util.Date
+import java.util.*
 import javax.persistence.Column
 import javax.persistence.Entity
-import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
 import javax.persistence.Id
+import javax.persistence.Temporal
+import javax.persistence.TemporalType
+
 
 /**
- * Class for Daily activity model.
+ * Class for Daily activity com.quin.assignment.model.
  */
 @Entity
-class DailyActivity(
-        @Id
-        @GeneratedValue(strategy = GenerationType.AUTO)
+data class DailyActivity(
 
         @CsvBindByName(column = DATE, required = true)
         @CsvDate("dd-mm-yyyy")
-        @Column(name = DATE, nullable = false)
+        @Id
+        @Column(name = DATE, nullable = false, unique = true)
+        @Temporal(TemporalType.DATE)
         var date: Date? = null,
 
         @CsvBindByName(column = CALORIES, required = true)
-        @CsvNumber("#.###")
+        @CsvNumber(THOUSANDS)
         @Column(name = CALORIES, nullable = false)
-        var caloriesIntake: Int? = null,
+        var caloriesIntake: Float? = null,
 
         @CsvBindByName(column = STEPS, required = true)
         @CsvNumber(THOUSANDS)
@@ -38,7 +39,7 @@ class DailyActivity(
         @Column(name = DISTANCE, nullable = false)
         var distance: Float? = null,
 
-        @CsvBindByName(column = "floors", required = true)
+        @CsvBindByName(column = FLOORS, required = true)
         @Column(name = FLOORS, nullable = false)
         var floors: Int? = null,
 
@@ -62,7 +63,7 @@ class DailyActivity(
         @CsvBindByName(column = CALORIES_ACTIVITY, required = true)
         @CsvNumber(THOUSANDS)
         @Column(name = CALORIES_ACTIVITY, nullable = false)
-        var caloriesBurned: Int? = null
+        var caloriesBurned: Float? = null
 ) {
 
     companion object {

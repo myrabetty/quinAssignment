@@ -16,7 +16,7 @@ class MvcConfig : WebMvcConfigurer {
     val home = "/home"
 
     /**
-     * login model view.
+     * login com.quin.assignment.model view.
      */
     val homeView = "home"
 

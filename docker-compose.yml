@@ -9,13 +9,13 @@ services:
       - "1212:1212"
     environment:
       - JAVA_TOOL_OPTIONS="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:1212"
-    command: '/bin/bash -c "/usr/bin/env chmod +x /project/wait-for-it.sh && /project/wait-for-it.sh mysql:3306 -t 25 && java -jar /app.jar"'
+    command: '/bin/bash -c "/usr/bin/env chmod +x /project/wait-for-it.sh && /project/wait-for-it.sh activitymonitordb:3306 -t 25 && java -jar /app.jar"'
     volumes:
       - ./docker/provision/wait-for-it.sh:/project/wait-for-it.sh
     links:
-      - mysql
-  mysql:
-    image: mysql:5.8
+      - activitymonitordb
+  activitymonitordb:
+    image: mysql:8
     ports:
       - "13306:3306"
     expose:
@@ -23,7 +23,5 @@ services:
     environment:
       - MYSQL_USER=springuser
       - MYSQL_PASSWORD=ThePassword
-      - MYSQL_DATABASE=activityMonitor
+      - MYSQL_DATABASE=activitymonitor
       - MYSQL_ROOT_PASSWORD=root
-    volumes:
-      - "./conf.d:/etc/mysql/conf.d:ro"
