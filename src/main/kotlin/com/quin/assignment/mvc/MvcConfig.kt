@@ -1,4 +1,4 @@
-package com.quin.assignment.mvc;
+package com.quin.assignment.mvc
 
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry
@@ -21,6 +21,6 @@ class MvcConfig : WebMvcConfigurer {
     val homeView = "home"
 
     override fun addViewControllers(registry: ViewControllerRegistry) {
-        registry.addViewController(home).setViewName(home)
+        registry.addViewController(home).setViewName(homeView)
     }
 }
