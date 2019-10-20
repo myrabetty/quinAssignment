@@ -10,6 +10,7 @@ import java.io.BufferedReader
 import java.io.File
 import java.io.FileReader
 import java.io.IOException
+import java.io.StringReader
 import java.lang.Exception
 
 /**
@@ -19,11 +20,13 @@ import java.lang.Exception
 class FileService @Autowired constructor(
         private val dailyActivityRepository: DailyActivityRepository
 ) : Logging {
-    fun process(file: File): Boolean {
 
+
+    fun process(content: String): Boolean {
         var reader: BufferedReader? = null
         try {
-            reader = BufferedReader(FileReader(file.name))
+            reader = BufferedReader(StringReader(content))
+
             val csvBean = CsvToBeanBuilder<DailyActivity>(reader)
                     .withType(DailyActivity::class.java)
                     .withIgnoreLeadingWhiteSpace(true)
@@ -32,11 +35,9 @@ class FileService @Autowired constructor(
 
             val iterator: Iterator<DailyActivity> = csvBean.iterator()
 
-            var dailyActivitySet = mutableSetOf<DailyActivity>()
             while (iterator.hasNext()) {
                 val dailyActivity = iterator.next()
                 dailyActivityRepository.save(dailyActivity)
-                //dailyActivitySet.add(dailyActivity)
             }
             //dailyActivityRepository.saveAll(dailyActivitySet)
             return true
