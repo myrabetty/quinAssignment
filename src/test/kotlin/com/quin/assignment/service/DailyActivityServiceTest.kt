@@ -12,14 +12,14 @@ import org.mockito.Mockito.verify
 import java.text.SimpleDateFormat
 
 /**
- * test class for FileService class.
+ * test class for DailyActivityService class.
  */
 
-internal class FileServiceTest {
+internal class DailyActivityServiceTest {
 
     private val dailyActivityRepository: DailyActivityRepository = Mockito.mock(DailyActivityRepository::class.java)
-    private val fileService: FileService = FileService(dailyActivityRepository)
-    private val formatter = SimpleDateFormat("dd-mm-yyyy")
+    private val dailyActivityService: DailyActivityService = DailyActivityService(dailyActivityRepository)
+    private val formatter = SimpleDateFormat("dd-MM-yyyy")
     private val captor = ArgumentCaptor.forClass(DailyActivity::class.java)
 
     @Test
@@ -43,7 +43,7 @@ internal class FileServiceTest {
         dailyActivityEntryOne.caloriesBurned = 168
 
         //act
-        fileService.process(content)
+        dailyActivityService.process(content)
 
         //assert
         verify(dailyActivityRepository).save(captor.capture())
@@ -70,7 +70,7 @@ internal class FileServiceTest {
                 "\"09-05-2015\",\"3.631\",\"18.925\",\"14,11\",\"4\",\"611\",\"316\",\"61\",\"60\",\"2.248\""
 
         //act
-        fileService.process(content)
+        dailyActivityService.process(content)
 
         //assert
         verify(dailyActivityRepository, times(2)).save(any())

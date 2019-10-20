@@ -1,44 +1,45 @@
 package com.quin.assignment.controller
 
-import com.quin.assignment.service.FileService
+import com.quin.assignment.service.DailyActivityService
+
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers
-import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.anyString
 import org.mockito.Mockito
-import org.mockito.Mockito.doNothing
 import org.mockito.Mockito.doReturn
 import org.mockito.Mockito.verify
 import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.servlet.mvc.support.RedirectAttributes
+import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap
 
 /**
  * test class for MainController
  */
 internal class MainControllerTest {
 
-    private val redirectAttributes: RedirectAttributes = Mockito.mock(RedirectAttributes::class.java)
+    private val redirectAttributes: RedirectAttributes = Mockito.mock(RedirectAttributesModelMap::class.java)
     private val multipartFile: MultipartFile = Mockito.mock(MultipartFile::class.java)
-    private val fileService: FileService = Mockito.mock(FileService::class.java)
-    private val mainController = MainController(fileService)
-    private val captor = ArgumentCaptor.forClass(String::class.java)
-
+    private val dailyActivityService: DailyActivityService = Mockito.mock(DailyActivityService::class.java)
+    private val mainController = MainController(dailyActivityService)
+    private val keyCaptor = ArgumentCaptor.forClass(String::class.java)
+    private val valueCaptor = ArgumentCaptor.forClass(Object::class.java)
     @Test
     fun uploadMultiPartFile_fileIsProcessed_successReturned() {
         //arrange
         doReturn("name").`when`(multipartFile).originalFilename
         doReturn("content".toByteArray()).`when`(multipartFile).bytes
-        doReturn(true).`when`(fileService).process(ArgumentMatchers.anyString())
-        doReturn(redirectAttributes).`when`(redirectAttributes).addFlashAttribute(ArgumentMatchers.anyString())
+        doReturn(true).`when`(dailyActivityService).process(anyString())
+        doReturn(redirectAttributes).`when`(redirectAttributes).addFlashAttribute(anyString())
 
         //act
         mainController.uploadMultipartFile(multipartFile, redirectAttributes)
 
         //assert
-        verify(fileService).process(any())
-        verify(redirectAttributes).addFlashAttribute(captor.capture())
-        assertEquals(captor.value, "File uploaded successfully! -> filename = " + multipartFile.originalFilename, "message success as expected")
+        verify(dailyActivityService).process(anyString())
+        verify(redirectAttributes).addFlashAttribute(keyCaptor.capture(), valueCaptor.capture())
+        assertEquals("message", keyCaptor.value, "key message as expected")
+        assertEquals("File uploaded successfully! -> filename = " + multipartFile.originalFilename, valueCaptor.value,  "message success as expected")
     }
 
     @Test
@@ -46,15 +47,16 @@ internal class MainControllerTest {
         //arrange
         doReturn("name").`when`(multipartFile).originalFilename
         doReturn("content".toByteArray()).`when`(multipartFile).bytes
-        doReturn(false).`when`(fileService).process(ArgumentMatchers.anyString())
-        doReturn(redirectAttributes).`when`(redirectAttributes).addFlashAttribute(ArgumentMatchers.anyString())
+        doReturn(false).`when`(dailyActivityService).process(anyString())
+        doReturn(redirectAttributes).`when`(redirectAttributes).addFlashAttribute(anyString())
 
         //act
         mainController.uploadMultipartFile(multipartFile, redirectAttributes)
 
         //assert
-        verify(fileService).process(any())
-        verify(redirectAttributes).addFlashAttribute(captor.capture())
-        assertEquals(captor.value,  "File uploaded failed! -> filename = " + multipartFile.originalFilename, "message success as expected")
+        verify(dailyActivityService).process(anyString())
+        verify(redirectAttributes).addFlashAttribute(keyCaptor.capture(), valueCaptor.capture())
+        assertEquals("message", keyCaptor.value, "key message as expected")
+        assertEquals("File uploaded failed! -> filename = " + multipartFile.originalFilename, valueCaptor.value,  "message success as expected")
     }
 }

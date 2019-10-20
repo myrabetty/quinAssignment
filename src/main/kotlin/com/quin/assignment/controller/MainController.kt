@@ -1,11 +1,16 @@
 package com.quin.assignment.controller
 
-import com.quin.assignment.service.FileService
+import com.quin.assignment.model.ActivityStatistics
+import com.quin.assignment.model.DailyActivity
+import com.quin.assignment.service.DailyActivityService
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.MediaType
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.servlet.mvc.support.RedirectAttributes
 import java.nio.charset.Charset
@@ -16,7 +21,7 @@ import java.nio.charset.Charset
 
 @Controller
 class MainController @Autowired constructor(
-        private val fileService: FileService
+        private val dailyActivityService: DailyActivityService
 ) {
     /**
      * File upload page view.
@@ -30,10 +35,27 @@ class MainController @Autowired constructor(
     fun uploadMultipartFile(@RequestParam("file") multipartFile: MultipartFile, redirectAttributes: RedirectAttributes): String {
         val content = String(multipartFile.bytes, Charset.defaultCharset())
 
-        if (fileService.process(content))
+        if (dailyActivityService.process(content)) {
             redirectAttributes.addFlashAttribute("message", "File uploaded successfully! -> filename = " + multipartFile.originalFilename)
-        else
+        } else {
             redirectAttributes.addFlashAttribute("message", "File uploaded failed! -> filename = " + multipartFile.originalFilename)
+        }
         return "redirect:/home"
     }
+
+    @RequestMapping(value = ["/browse"], produces = [MediaType.APPLICATION_JSON_VALUE])
+    @ResponseBody
+    fun browseDailyActivity(
+            @RequestParam("page", defaultValue = "0", required = false) page: Int,
+            @RequestParam("limit", defaultValue = "1000", required = false) limit: Int
+    ): List<DailyActivity> {
+        return dailyActivityService.getData(page, limit)
+    }
+
+    @RequestMapping(value = ["/statistics"], produces = [MediaType.APPLICATION_JSON_VALUE])
+    @ResponseBody
+    fun statistics(): ActivityStatistics {
+        return dailyActivityService.getActivityStatistics()
+    }
+
 }

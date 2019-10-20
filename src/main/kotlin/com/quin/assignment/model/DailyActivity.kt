@@ -14,7 +14,7 @@ import javax.persistence.Temporal
 import javax.persistence.TemporalType
 
 /**
- * Class for Daily activity com.quin.assignment.model.
+ * Class for Daily activity.
  */
 @Entity
 data class DailyActivity(
@@ -79,7 +79,7 @@ data class DailyActivity(
 class CustomDateConverter : AbstractBeanField<Date>() {
     @Throws(CsvDataTypeMismatchException::class, CsvConstraintViolationException::class)
     override fun convert(date: String): Any {
-        val formatter = SimpleDateFormat("dd-mm-yyyy")
+        val formatter = SimpleDateFormat("dd-MM-yyyy")
         return formatter.parse(date)
     }
 }

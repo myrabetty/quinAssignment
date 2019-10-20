@@ -4,6 +4,29 @@
 <head>
     <title>Quin Assignment</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+
+    <style>
+        #table td {
+            text-align: right;
+        }
+
+        #table td, #table th {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        #table tr:nth-child(even){background-color: #f2f2f2;}
+
+        #table tr:hover {background-color: #ddd;}
+
+        #table th {
+            padding-top: 12px;
+            padding-bottom: 12px;
+            text-align: center;
+            background-color: #4CAF50;
+            color: white;
+        }
+    </style>
 </head>
 <body>
 <h1>Welcome</h1>
@@ -16,14 +39,15 @@
         <input type="radio" name="options" id="uploadAction" onchange="checkSelection()"> Upload new data
         <input type="radio" name="options" id="browseAction" onchange="checkSelection()"> Consult existing data
 
-        <div th:if="${message}">
+        <div th:if="${message}" id="uploadMessage">
             <h2 th:text="${message}"/>
         </div>
 
         <div hidden id="uploadForm">
             <table id="uploadTable" style="border-collapse: separate; border-spacing:0 10px;">
                 <tr>
-                    <td><input type="file" id="input" name="file" accept=".csv" onchange="checkFileName(this);" required/>
+                    <td><input type="file" id="input" name="file" accept=".csv" onchange="checkFileName(this);"
+                               required/>
                     </td>
                 </tr>
                 <tr>
@@ -33,11 +57,28 @@
         </div>
 
         <div hidden id="browseTable">
-            <p> nothing here build controller to retrieve data</p>
+            <table id="table">
+                <thead>
+                <th>Date</th>
+                <th>Calories</th>
+                <th>Steps</th>
+                <th>Distance</th>
+                <th>Floors</th>
+                <th>Minutes sitting</th>
+                <th>Minutes of slow activity</th>
+                <th>Minutes of moderate activity</th>
+                <th>Minutes of intense activity</th>
+                <th>Calories Activity</th>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
         </div>
     </form>
 </div>
 </body>
+<script type="text/javascript"
+        src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js">
+</script>
 <script type="text/javascript">
     function checkFileName(sender) {
         var fullPath = sender.value;
@@ -52,14 +93,51 @@
         }
     }
 
-    function checkSelection() {
-        if (document.getElementById("uploadAction").checked == true) {
-            document.getElementById("uploadForm").hidden = false;
-            document.getElementById("browseTable").hidden = true;
-        } else {
-            document.getElementById("uploadForm").hidden = true;
-            document.getElementById("browseTable").hidden = false;
+    function cleanUploadMessage() {
+        var message = document.getElementById("uploadMessage");
+        if (message !== null) {
+            message.remove();
         }
     }
+
+    function checkSelection() {
+
+        if (document.getElementById("uploadAction").checked === true) {
+            document.getElementById("uploadForm").hidden = false;
+            document.getElementById("browseTable").hidden = true;
+            cleanUploadMessage();
+        } else if (document.getElementById("browseAction").checked === true) {
+            document.getElementById("uploadForm").hidden = true;
+            document.getElementById("browseTable").hidden = false;
+            cleanUploadMessage();
+            displayExistingData();
+        }
+    }
+
+    KEYS = ["date", "caloriesIntake", "steps", "distance", "floors", "minutesSitting", "minutesSlowActivity", "minutesModerateActivity", "minutesIntenseActivity", "caloriesBurned"];
+    var loaded = false;
+
+    function renderRowHtml(row) {
+        var rendered = '';
+        KEYS.forEach(function (key) {
+            rendered = rendered + '<td>' + row[key] + '</td>';
+        });
+        return rendered;
+    }
+
+    function displayExistingData() {
+        if (!loaded) {
+            $.get('/browse', function (data) {
+                loaded = true;
+                data.forEach(function (row) {
+                    document.getElementById('tableBody').insertRow(-1).innerHTML = renderRowHtml(row);
+                })
+            });
+        }
+    }
+
+    $(document).ready(function () {
+        checkSelection();
+    });
 </script>
 </html>
