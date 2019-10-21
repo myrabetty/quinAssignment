@@ -21,11 +21,13 @@ class StatisticsService @Autowired constructor(
 ) : Logging {
 
     fun getActivityStatistics(): ActivityStatistics {
-        val maybeLatest = dailyActivityRepository.findFirstByOrderByDateDesc().date
-        val latest = maybeLatest ?: Date()
-        val series = getTimeSeries(latest)
-        val statistics = getWeeklyStatistics(latest)
-        return ActivityStatistics(series, statistics)
+        val latest = dailyActivityRepository.findFirstByOrderByDateDesc()
+        latest?.let {
+            val date = latest.date
+            val series = getTimeSeries(date!!)
+            val statistics = getWeeklyStatistics(date!!)
+            return ActivityStatistics(series, statistics)
+        }
     }
 
     private fun getTimeSeries(latest: Date): Map<String, List<Any?>> {
