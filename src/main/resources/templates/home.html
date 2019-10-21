@@ -6,25 +6,34 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 
     <style>
-        #table td {
+        #dailyActivityTable td {
             text-align: right;
         }
 
-        #table td, #table th {
+        #dailyActivityTable td, #dailyActivityTable th {
             border: 1px solid #ddd;
             padding: 8px;
         }
 
-        #table tr:nth-child(even){background-color: #f2f2f2;}
+        #dailyActivityTable tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
 
-        #table tr:hover {background-color: #ddd;}
+        #dailyActivityTable tr:hover {
+            background-color: #ddd;
+        }
 
-        #table th {
+        #dailyActivityTable th {
             padding-top: 12px;
             padding-bottom: 12px;
             text-align: center;
             background-color: #4CAF50;
             color: white;
+        }
+
+        .two-plot-container {
+            display: flex;
+            flex-direction: row;
         }
     </style>
 </head>
@@ -38,6 +47,7 @@
 
         <input type="radio" name="options" id="uploadAction" onchange="checkSelection()"> Upload new data
         <input type="radio" name="options" id="browseAction" onchange="checkSelection()"> Consult existing data
+        <input type="radio" name="options" id="checkStatisticsAction" onchange="checkSelection()"> Check statistics
 
         <div th:if="${message}" id="uploadMessage">
             <h2 th:text="${message}"/>
@@ -57,7 +67,7 @@
         </div>
 
         <div hidden id="browseTable">
-            <table id="table">
+            <table id="dailyActivityTable">
                 <thead>
                 <th>Date</th>
                 <th>Calories</th>
@@ -70,8 +80,22 @@
                 <th>Minutes of intense activity</th>
                 <th>Calories Activity</th>
                 </thead>
-                <tbody id="tableBody"></tbody>
+                <tbody id="tableBodyDailyActivity"></tbody>
             </table>
+        </div>
+
+        <div hidden id="statisticsTable">
+            <h3>Two month dailies</h3>
+            <div class="two-plot-container">
+                <div id="calories-plot" style="width:600px;height:250px;"></div>
+                <div id="steps-plot" style="width:600px;height:250px;"></div>
+            </div>
+
+            <h3>Averages over 3 months</h3>
+            <div class="two-plot-container">
+                <div id="average-calories-plot" style="width:600px;height:250px;"></div>
+                <div id="average-calories-in-plot" style="width:600px;height:250px;"></div>
+            </div>
         </div>
     </form>
 </div>
@@ -79,6 +103,7 @@
 <script type="text/javascript"
         src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js">
 </script>
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 <script type="text/javascript">
     function checkFileName(sender) {
         var fullPath = sender.value;
@@ -105,17 +130,26 @@
         if (document.getElementById("uploadAction").checked === true) {
             document.getElementById("uploadForm").hidden = false;
             document.getElementById("browseTable").hidden = true;
+            document.getElementById("statisticsTable").hidden = true;
             cleanUploadMessage();
         } else if (document.getElementById("browseAction").checked === true) {
             document.getElementById("uploadForm").hidden = true;
+            document.getElementById("statisticsTable").hidden = true;
             document.getElementById("browseTable").hidden = false;
             cleanUploadMessage();
             displayExistingData();
+        } else if (document.getElementById("checkStatisticsAction").checked === true) {
+            document.getElementById("statisticsTable").hidden = false;
+            document.getElementById("uploadForm").hidden = true;
+            document.getElementById("browseTable").hidden = true;
+            cleanUploadMessage();
+            displayStatistics();
         }
     }
 
     KEYS = ["date", "caloriesIntake", "steps", "distance", "floors", "minutesSitting", "minutesSlowActivity", "minutesModerateActivity", "minutesIntenseActivity", "caloriesBurned"];
-    var loaded = false;
+    var dataLoaded = false;
+    var statsLoaded = false;
 
     function renderRowHtml(row) {
         var rendered = '';
@@ -126,12 +160,56 @@
     }
 
     function displayExistingData() {
-        if (!loaded) {
+        if (!dataLoaded) {
             $.get('/browse', function (data) {
-                loaded = true;
+                dataLoaded = true;
                 data.forEach(function (row) {
-                    document.getElementById('tableBody').insertRow(-1).innerHTML = renderRowHtml(row);
+                    document.getElementById('tableBodyDailyActivity').insertRow(-1).innerHTML = renderRowHtml(row);
                 })
+            });
+        }
+    }
+
+    function displayStatistics() {
+        if (!statsLoaded) {
+            $.get('/statistics', function (data) {
+                statsLoaded = true;
+                Plotly.plot('calories-plot',
+                    [{
+                        x: data.timeSeries.date,
+                        y: data.timeSeries.calories,
+                    }],
+                    {
+                        title: 'Calories burned'
+                    }
+                );
+                Plotly.plot('steps-plot',
+                    [{
+                        x: data.timeSeries.date,
+                        y: data.timeSeries.steps,
+                    }],
+                    {
+                        title: 'Steps taken'
+                    }
+                );
+                Plotly.plot('average-calories-plot',
+                    [{
+                        x: data.weeklyStatistics.finalDate,
+                        y: data.weeklyStatistics.caloriesBurned
+                    }],
+                    {
+                        title: 'Average calories burned'
+                    }
+                );
+                Plotly.plot('average-calories-in-plot',
+                    [{
+                        x: data.weeklyStatistics.finalDate,
+                        y: data.weeklyStatistics.caloriesIntake
+                    }],
+                    {
+                        title: 'Average calories taken in'
+                    }
+                );
             });
         }
     }

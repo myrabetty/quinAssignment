@@ -54,14 +54,17 @@ class StatisticsService @Autowired constructor(
         val caloriesBurned = ArrayList<Int>()
         val caloriesIntake = ArrayList<Int>()
         val numberOfDays = ArrayList<Int>()
-        val dates = ArrayList<Date>()
+        val finalDates = ArrayList<Date>()
+        val initialDates = ArrayList<Date>()
         var maxDate = latest
         for (i in 1..12) {
-            dates.add(maxDate)
+            finalDates.add(maxDate)
             val cal = Calendar.getInstance()
             cal.time = maxDate
             cal.add(Calendar.WEEK_OF_YEAR, -1)
+            cal.add(Calendar.DAY_OF_YEAR, 1)
             val minDate = cal.time
+            initialDates.add(minDate)
             val activities = dailyActivityRepository.findByDateBetween(minDate, maxDate)
             caloriesBurned.add(activities.stream().mapToDouble { a -> (a?.caloriesBurned!!.toDouble()) }.average().orElse(0.0).toInt())
             caloriesIntake.add(activities.stream().mapToDouble { a -> (a?.caloriesIntake!!.toDouble())}.average().orElse(0.0).toInt())
@@ -70,7 +73,8 @@ class StatisticsService @Autowired constructor(
         }
 
         val weeklyStats = HashMap<String, List<Any>>()
-        weeklyStats["finalDate"] = dates
+        weeklyStats["finalDate"] = finalDates
+        weeklyStats["initialDate"] = initialDates
         weeklyStats["caloriesBurned"] = caloriesBurned
         weeklyStats["caloriesIntake"] = caloriesIntake
         weeklyStats["numberOfDays"] = numberOfDays

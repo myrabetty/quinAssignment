@@ -120,7 +120,7 @@ internal class StatisticsServiceTest {
                 .build()
 
         val endDate = formatter.parse("08-05-2015")
-        val startDate = formatter.parse("01-05-2015")
+        val startDate = formatter.parse("02-05-2015")
         doReturn(dailyActivityEntryOne).`when`(dailyActivityRepository).findFirstByOrderByDateDesc()
         doReturn(listOf(dailyActivityEntryOne, dailyActivityEntryTwo)).`when`(dailyActivityRepository).findByDateBetween(startDate, endDate)
 
@@ -129,7 +129,7 @@ internal class StatisticsServiceTest {
 
         //assert
         var weeklyStatistics = activityStatistics.weeklyStatistics
-        assertEquals(4, weeklyStatistics.size, "number of statics is as expected")
+        assertEquals(5, weeklyStatistics.size, "number of statics is as expected")
 
         val date = weeklyStatistics["finalDate"]
         assertEquals(12, date?.size, "number of week entries is as expected")
@@ -154,17 +154,17 @@ internal class StatisticsServiceTest {
         val formatter = SimpleDateFormat("dd-MM-yyyy")
 
         val dates = listOf(formatter.parse("08-05-2015"),
-                formatter.parse("01-05-2015"),
-                formatter.parse("24-04-2015"),
-                formatter.parse("17-04-2015"),
-                formatter.parse("10-04-2015"),
-                formatter.parse("03-04-2015"),
+                formatter.parse("02-05-2015"),
+                formatter.parse("26-04-2015"),
+                formatter.parse("20-04-2015"),
+                formatter.parse("14-04-2015"),
+                formatter.parse("08-04-2015"),
+                formatter.parse("02-04-2015"),
                 formatter.parse("27-03-2015"),
-                formatter.parse("20-03-2015"),
-                formatter.parse("13-03-2015"),
-                formatter.parse("06-03-2015"),
-                formatter.parse("27-02-2015"),
-                formatter.parse("20-02-2015")
+                formatter.parse("21-03-2015"),
+                formatter.parse("15-03-2015"),
+                formatter.parse("09-03-2015"),
+                formatter.parse("03-03-2015")
         )
 
         val dailyActivityEntryOne = DailyActivity.Builder()
@@ -187,7 +187,7 @@ internal class StatisticsServiceTest {
 
         //assert
         var weeklyStatistics = activityStatistics.weeklyStatistics
-        assertEquals(4, weeklyStatistics.size, "number of statics is as expected")
+        assertEquals(5, weeklyStatistics.size, "number of statics is as expected")
 
         val date = weeklyStatistics["finalDate"]
         assertEquals(12, date?.size, "number of week entries is as expected")
