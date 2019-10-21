@@ -1,7 +1,6 @@
 package com.quin.assignment.service
 
 import com.opencsv.bean.CsvToBeanBuilder
-import com.quin.assignment.model.ActivityStatistics
 import com.quin.assignment.model.DailyActivity
 import com.quin.assignment.repository.DailyActivityRepository
 import org.apache.logging.log4j.kotlin.Logging
@@ -11,12 +10,8 @@ import org.springframework.stereotype.Service
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.StringReader
-import java.util.*
 import java.util.stream.Collectors
 import javax.transaction.Transactional
-import java.util.Calendar
-import kotlin.collections.HashMap
-
 
 /**
  * Service to process the file.
