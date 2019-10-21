@@ -28,6 +28,7 @@ class StatisticsService @Autowired constructor(
             val statistics = getWeeklyStatistics(date!!)
             return ActivityStatistics(series, statistics)
         }
+        return ActivityStatistics(emptyMap(), emptyMap())
     }
 
     private fun getTimeSeries(latest: Date): Map<String, List<Any?>> {
@@ -50,7 +51,9 @@ class StatisticsService @Autowired constructor(
     }
 
     private fun getWeeklyStatistics(latest: Date): Map<String, List<Any>> {
-        val calories = ArrayList<Double>()
+        val caloriesBurned = ArrayList<Int>()
+        val caloriesIntake = ArrayList<Int>()
+        val numberOfDays = ArrayList<Int>()
         val dates = ArrayList<Date>()
         var maxDate = latest
         for (i in 1..12) {
@@ -60,13 +63,17 @@ class StatisticsService @Autowired constructor(
             cal.add(Calendar.WEEK_OF_YEAR, -1)
             val minDate = cal.time
             val activities = dailyActivityRepository.findByDateBetween(minDate, maxDate)
-            calories.add(activities.stream().mapToDouble { a -> (a?.caloriesBurned ?: 0) * 1.0 }.average().orElse(0.0))
+            caloriesBurned.add(activities.stream().mapToDouble { a -> (a?.caloriesBurned!!.toDouble()) }.average().orElse(0.0).toInt())
+            caloriesIntake.add(activities.stream().mapToDouble { a -> (a?.caloriesIntake!!.toDouble())}.average().orElse(0.0).toInt())
+            numberOfDays.add(activities.size)
             maxDate = minDate
         }
 
         val weeklyStats = HashMap<String, List<Any>>()
         weeklyStats["finalDate"] = dates
-        weeklyStats["calories"] = calories
+        weeklyStats["caloriesBurned"] = caloriesBurned
+        weeklyStats["caloriesIntake"] = caloriesIntake
+        weeklyStats["numberOfDays"] = numberOfDays
         return weeklyStats
     }
 }

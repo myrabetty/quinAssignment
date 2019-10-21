@@ -13,7 +13,7 @@ interface DailyActivityRepository : PagingAndSortingRepository<DailyActivity, Lo
 
     fun findAllByOrderByDateDesc(page: Pageable): Page<DailyActivity>
 
-    fun findFirstByOrderByDateDesc(): DailyActivity
+    fun findFirstByOrderByDateDesc(): DailyActivity?
 
     fun findByDateBetween(
             @Param("dateBefore") dateBefore: Date,
