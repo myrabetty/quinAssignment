@@ -6,24 +6,24 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 
     <style>
-        #dailyActivityTable td {
+        #daily-activity-table td {
             text-align: right;
         }
 
-        #dailyActivityTable td, #dailyActivityTable th {
+        #daily-activity-table td, #daily-activity-table th {
             border: 1px solid #ddd;
             padding: 8px;
         }
 
-        #dailyActivityTable tr:nth-child(even) {
+        #daily-activity-table tr:nth-child(even) {
             background-color: #f2f2f2;
         }
 
-        #dailyActivityTable tr:hover {
+        #daily-activity-table tr:hover {
             background-color: #ddd;
         }
 
-        #dailyActivityTable th {
+        #daily-activity-table th {
             padding-top: 12px;
             padding-bottom: 12px;
             text-align: center;
@@ -45,16 +45,16 @@
         <h2> Choose the action you want to perform </h2>
 
 
-        <input type="radio" name="options" id="uploadAction" onchange="checkSelection()"> Upload new data
-        <input type="radio" name="options" id="browseAction" onchange="checkSelection()"> Consult existing data
-        <input type="radio" name="options" id="checkStatisticsAction" onchange="checkSelection()"> Check statistics
+        <input type="radio" name="options" id="upload-action" onchange="checkSelection()"> Upload new data
+        <input type="radio" name="options" id="browse-action" onchange="checkSelection()"> Consult existing data
+        <input type="radio" name="options" id="check-statistics-action" onchange="checkSelection()"> Check statistics
 
-        <div th:if="${message}" id="uploadMessage">
+        <div th:if="${message}" id="upload-message">
             <h2 th:text="${message}"/>
         </div>
 
-        <div hidden id="uploadForm">
-            <table id="uploadTable" style="border-collapse: separate; border-spacing:0 10px;">
+        <div hidden id="upload-form">
+            <table id="upload-table" style="border-collapse: separate; border-spacing:0 10px;">
                 <tr>
                     <td><input type="file" id="input" name="file" accept=".csv" onchange="checkFileName(this);"
                                required/>
@@ -66,8 +66,8 @@
             </table>
         </div>
 
-        <div hidden id="browseTable">
-            <table id="dailyActivityTable">
+        <div hidden id="browse-table">
+            <table id="daily-activity-table">
                 <thead>
                 <th>Date</th>
                 <th>Calories</th>
@@ -80,11 +80,11 @@
                 <th>Minutes of intense activity</th>
                 <th>Calories Activity</th>
                 </thead>
-                <tbody id="tableBodyDailyActivity"></tbody>
+                <tbody id="table-body-daily-activity"></tbody>
             </table>
         </div>
 
-        <div hidden id="statisticsTable">
+        <div hidden id="statistics-table">
             <h3>Two month dailies</h3>
             <div class="two-plot-container">
                 <div id="calories-plot" style="width:600px;height:250px;"></div>
@@ -119,7 +119,7 @@
     }
 
     function cleanUploadMessage() {
-        var message = document.getElementById("uploadMessage");
+        var message = document.getElementById("upload-message");
         if (message !== null) {
             message.remove();
         }
@@ -127,21 +127,21 @@
 
     function checkSelection() {
 
-        if (document.getElementById("uploadAction").checked === true) {
-            document.getElementById("uploadForm").hidden = false;
-            document.getElementById("browseTable").hidden = true;
-            document.getElementById("statisticsTable").hidden = true;
+        if (document.getElementById("upload-action").checked === true) {
+            document.getElementById("upload-form").hidden = false;
+            document.getElementById("browse-table").hidden = true;
+            document.getElementById("statistics-table").hidden = true;
             cleanUploadMessage();
-        } else if (document.getElementById("browseAction").checked === true) {
-            document.getElementById("uploadForm").hidden = true;
-            document.getElementById("statisticsTable").hidden = true;
-            document.getElementById("browseTable").hidden = false;
+        } else if (document.getElementById("browse-action").checked === true) {
+            document.getElementById("upload-form").hidden = true;
+            document.getElementById("statistics-table").hidden = true;
+            document.getElementById("browse-table").hidden = false;
             cleanUploadMessage();
             displayExistingData();
-        } else if (document.getElementById("checkStatisticsAction").checked === true) {
-            document.getElementById("statisticsTable").hidden = false;
-            document.getElementById("uploadForm").hidden = true;
-            document.getElementById("browseTable").hidden = true;
+        } else if (document.getElementById("check-statistics-action").checked === true) {
+            document.getElementById("statistics-table").hidden = false;
+            document.getElementById("upload-form").hidden = true;
+            document.getElementById("browse-table").hidden = true;
             cleanUploadMessage();
             displayStatistics();
         }
@@ -164,7 +164,7 @@
             $.get('/browse', function (data) {
                 dataLoaded = true;
                 data.forEach(function (row) {
-                    document.getElementById('tableBodyDailyActivity').insertRow(-1).innerHTML = renderRowHtml(row);
+                    document.getElementById('table-body-daily-activity').insertRow(-1).innerHTML = renderRowHtml(row);
                 })
             });
         }
