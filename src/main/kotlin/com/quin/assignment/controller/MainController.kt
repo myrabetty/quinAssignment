@@ -3,6 +3,7 @@ package com.quin.assignment.controller
 import com.quin.assignment.model.ActivityStatistics
 import com.quin.assignment.model.DailyActivity
 import com.quin.assignment.service.DailyActivityService
+import com.quin.assignment.service.StatisticsService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Controller
@@ -21,7 +22,8 @@ import java.nio.charset.Charset
 
 @Controller
 class MainController @Autowired constructor(
-        private val dailyActivityService: DailyActivityService
+        private val dailyActivityService: DailyActivityService,
+        private val statisticsService: StatisticsService
 ) {
     /**
      * File upload page view.
@@ -54,8 +56,8 @@ class MainController @Autowired constructor(
 
     @RequestMapping(value = ["/statistics"], produces = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseBody
-    fun statistics(): ActivityStatistics {
-        return dailyActivityService.getActivityStatistics()
+    fun browseStatistics(): ActivityStatistics {
+        return statisticsService.getActivityStatistics()
     }
 
 }
